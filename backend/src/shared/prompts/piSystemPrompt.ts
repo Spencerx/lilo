@@ -8,10 +8,6 @@ import { discoverWorkspaceSkills } from "../skills/skills.js";
 const PROMPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const SOUL_FILE_NAME = "SOUL.md";
 const MAX_SOUL_PROMPT_CHARS = 12_000;
-const DESIGN_SYSTEM_PATH_CANDIDATES = [
-  resolve(PROMPTS_DIR, "DESIGN-SYSTEM.md"),
-  resolve(PROMPTS_DIR, "../../../src/shared/prompts/DESIGN-SYSTEM.md"),
-];
 
 const DEFAULT_SOUL_PROMPT = `# Soul / Identity
 
@@ -55,48 +51,6 @@ const readPiSystemPrompt = (): string => {
       },
       level: "error",
       fingerprint: ["prompts", "pi-system", "read_failed"],
-    });
-    return "";
-  }
-};
-
-const readDesignSystemPrompt = (): string => {
-  try {
-    const designSystemPath = DESIGN_SYSTEM_PATH_CANDIDATES.find((candidate) =>
-      existsSync(candidate),
-    );
-    if (!designSystemPath) {
-      captureBackendException(new Error("DESIGN-SYSTEM.md not found"), {
-        tags: {
-          area: "prompts",
-          prompt_file: "DESIGN-SYSTEM.md",
-        },
-        extras: {
-          candidates: DESIGN_SYSTEM_PATH_CANDIDATES,
-        },
-        level: "warning",
-        fingerprint: ["prompts", "design-system", "missing"],
-      });
-      return "";
-    }
-
-    const designSystem = readFileSync(designSystemPath, "utf8").trim();
-    if (!designSystem) {
-      return "";
-    }
-
-    return `\n# Design System\n\nAlways apply the following design system when building or updating user-facing apps and interfaces (unless the users asks you to deviate from it):\n\n${designSystem}\n`;
-  } catch (error) {
-    captureBackendException(error, {
-      tags: {
-        area: "prompts",
-        prompt_file: "DESIGN-SYSTEM.md",
-      },
-      extras: {
-        candidates: DESIGN_SYSTEM_PATH_CANDIDATES,
-      },
-      level: "error",
-      fingerprint: ["prompts", "design-system", "read_failed"],
     });
     return "";
   }
@@ -190,4 +144,4 @@ export const buildPiSystemPrompt = async (
   workspaceDir: string,
   options: PiSystemPromptOptions = {},
 ): Promise<string> =>
-  `${await readWorkspaceSoulPrompt(workspaceDir)}${readPiSystemPrompt()}${buildDeploymentPrompt(options)}${await buildSkillsPrompt(workspaceDir)}${readDesignSystemPrompt()}`;
+  `${await readWorkspaceSoulPrompt(workspaceDir)}${readPiSystemPrompt()}${buildDeploymentPrompt(options)}${await buildSkillsPrompt(workspaceDir)}`;
