@@ -1,4 +1,4 @@
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { activateSkillTool } from "./activateSkillTool.js";
 import { askUserQuestionTool } from "./askUserQuestionTool.js";
 import { browserAutomateTool } from "./browserbaseTools.js";

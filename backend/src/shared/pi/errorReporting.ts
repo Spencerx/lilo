@@ -1,5 +1,5 @@
-import type { SessionContext } from "@mariozechner/pi-coding-agent";
-import type { AssistantMessage } from "@mariozechner/pi-ai";
+import type { SessionContext } from "@earendil-works/pi-coding-agent";
+import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { captureBackendException } from "../observability/sentry.js";
 
 type SessionAgentMessage = SessionContext["messages"][number];

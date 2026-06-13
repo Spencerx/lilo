@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import type { SessionManager } from "@mariozechner/pi-coding-agent";
+import type { SessionManager } from "@earendil-works/pi-coding-agent";
 
 export const ensureDir = (path: string): string => {
   if (!existsSync(path)) {

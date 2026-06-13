@@ -75,7 +75,7 @@ LILO_SESSIONS_DIR=./.lilo-sessions      # persistent chat session storage
 
 # At least one chat model
 OPENAI_API_KEY=sk-...                   # enables GPT 5.5
-ANTHROPIC_API_KEY=sk-ant-...            # enables Claude Opus 4.7
+ANTHROPIC_API_KEY=sk-ant-...            # enables Claude Fable 5 and Claude Opus 4.7
 OPENROUTER_API_KEY=sk-or-...            # enables OpenRouter-routed models
 
 # Recommended

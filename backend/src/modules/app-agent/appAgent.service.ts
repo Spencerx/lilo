@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import type { AgentSessionEvent, SessionContext } from "@mariozechner/pi-coding-agent";
+import type { AgentSessionEvent, SessionContext } from "@earendil-works/pi-coding-agent";
 import {
   SessionManager,
   createAgentSession,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import {
   WORKSPACE_ROOT,
 } from "../../shared/config/paths.js";

@@ -1,5 +1,5 @@
-import { Type } from "@mariozechner/pi-ai";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { getAutomationNotificationContext } from "./automation.notification.js";
 import { describeSchedule } from "./automation.schedule.js";
 import { getAutomationService } from "./automation.registry.js";

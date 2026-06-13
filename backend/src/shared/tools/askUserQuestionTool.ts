@@ -1,5 +1,5 @@
-import { Type } from "@mariozechner/pi-ai";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 
 export const ASK_USER_QUESTION_TOOL_NAME = "ask_user_question";
 

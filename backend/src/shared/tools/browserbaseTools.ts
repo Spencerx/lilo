@@ -1,6 +1,6 @@
-import { Type } from "@mariozechner/pi-ai";
+import { Type } from "@earendil-works/pi-ai";
 import { chromium } from "playwright-core";
-import type { AgentToolResult, ToolDefinition } from "@mariozechner/pi-coding-agent";
+import type { AgentToolResult, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { backendConfig, requireConfigValue } from "../config/config.js";
 
 const BROWSERBASE_API_BASE_URL = "https://api.browserbase.com/v1";

@@ -1,5 +1,5 @@
-import { Type } from "@mariozechner/pi-ai";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { activateWorkspaceSkill, discoverWorkspaceSkills } from "../skills/skills.js";
 
 export const ACTIVATE_SKILL_TOOL_NAME = "activate_skill";

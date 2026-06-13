@@ -1,19 +1,22 @@
-import { getModel } from "@mariozechner/pi-ai";
+import { getModel } from "@earendil-works/pi-ai";
 import { backendConfig } from "../config/config.js";
 
 export type ChatModelProvider = "openai" | "anthropic" | "openrouter";
 export type CanonicalChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
+  | "claude-fable-5"
   | "claude-opus-4-7"
   | "moonshotai/kimi-k2.6";
 
 export type ChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
+  | "claude-fable-5"
   | "claude-opus-4-7"
   | "openai/gpt-5.5"
   | "openai/gpt-5.4-mini"
+  | "anthropic/claude-fable-5"
   | "anthropic/claude-opus-4.7"
   | "moonshotai/kimi-k2.6";
 
@@ -32,6 +35,13 @@ interface ChatModelRouteOption extends ChatModelOption {
 }
 
 const NATIVE_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
+  {
+    provider: "anthropic",
+    modelId: "claude-fable-5",
+    routingProvider: "anthropic",
+    nativeProvider: "anthropic",
+    canonicalId: "claude-fable-5",
+  },
   {
     provider: "anthropic",
     modelId: "claude-opus-4-7",
@@ -56,6 +66,13 @@ const NATIVE_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
 ];
 
 const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
+  {
+    provider: "openrouter",
+    modelId: "anthropic/claude-fable-5",
+    routingProvider: "openrouter",
+    nativeProvider: "anthropic",
+    canonicalId: "claude-fable-5",
+  },
   {
     provider: "openrouter",
     modelId: "anthropic/claude-opus-4.7",

@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
-    "@mariozechner/pi-ai": "^0.71.1",
-    "@mariozechner/pi-coding-agent": "^0.71.1",
+    "@earendil-works/pi-ai": "0.79.3",
+    "@earendil-works/pi-coding-agent": "0.79.3",
     "@sentry/node": "^10.48.0",
     "hono": "^4.6.10",
     "marked": "^17.0.4",

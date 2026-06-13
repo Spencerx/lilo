@@ -1,18 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
-import type { AgentSessionEvent, SessionContext } from "@mariozechner/pi-coding-agent";
+import type { AgentSessionEvent, SessionContext } from "@earendil-works/pi-coding-agent";
 import {
   SessionManager,
   createAgentSession,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import {
   type ImageContent,
   complete,
   getEnvApiKey,
   getModel,
   type TextContent,
-} from "@mariozechner/pi-ai";
+} from "@earendil-works/pi-ai";
 import type { UploadedChatFile } from "./chat.request.js";
 import {
   OPEN_APP_TOOL_NAME,

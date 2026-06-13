@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { relative, resolve } from "node:path";
-import { Type } from "@mariozechner/pi-ai";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { WORKSPACE_TEMPLATE_DIR } from "../config/paths.js";
 
 const MAX_TEMPLATE_FILE_CHARS = 80_000;

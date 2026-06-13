@@ -44,9 +44,11 @@ export type ChatModelProvider = "openai" | "anthropic" | "openrouter";
 export type ChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
+  | "claude-fable-5"
   | "claude-opus-4-7"
   | "openai/gpt-5.5"
   | "openai/gpt-5.4-mini"
+  | "anthropic/claude-fable-5"
   | "anthropic/claude-opus-4.7"
   | "moonshotai/kimi-k2.6";
 

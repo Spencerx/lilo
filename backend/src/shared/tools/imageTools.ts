@@ -1,5 +1,5 @@
-import { Type } from "@mariozechner/pi-ai";
-import type { AgentToolResult, ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { AgentToolResult, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { backendConfig, requireConfigValue } from "../config/config.js";
 import { getImageGenerationModel } from "../config/media.js";
 

@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { extname } from "node:path";
 import type { Hono } from "hono";
-import type { ImageContent } from "@mariozechner/pi-ai";
+import type { ImageContent } from "@earendil-works/pi-ai";
 import type { UploadedChatFile } from "../chat/chat.request.js";
 import type { PiSdkChatService, SseEvent } from "../chat/chat.service.js";
 import { backendConfig, requireConfigValue } from "../../shared/config/config.js";

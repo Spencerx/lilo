@@ -1,5 +1,5 @@
-import { Type } from "@mariozechner/pi-ai";
-import type { ToolDefinition } from "@mariozechner/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 
 export const CHANNEL_RESPONSE_TOOL_NAME = "send_channel_response";
 const VOICE_RESPONSE_CHUNK_MAX_CHARS = 3_500;
