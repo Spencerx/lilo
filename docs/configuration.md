@@ -22,8 +22,8 @@ At least one is required to actually use Lilo.
 
 | Variable             | Enables                                                                     |
 | -------------------- | --------------------------------------------------------------------------- |
-| `OPENAI_API_KEY`     | GPT 5.5, GPT 5.4 Mini                                                                      |
-| `ANTHROPIC_API_KEY`  | Claude Fable 5, Claude Opus 4.7                                                            |
+| `OPENAI_API_KEY`     | GPT 5.5, GPT 5.4 Mini                                                       |
+| `ANTHROPIC_API_KEY`  | Claude Fable 5, Claude Opus 4.7                                             |
 | `OPENROUTER_API_KEY` | OpenRouter routing for GPT 5.5, GPT 5.4 Mini, Claude Fable 5, Claude Opus 4.7, and Kimi K2.6 |
 
 If `OPENROUTER_API_KEY` is set, Lilo can route supported models through

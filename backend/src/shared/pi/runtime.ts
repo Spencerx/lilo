@@ -36,20 +36,6 @@ interface ChatModelRouteOption extends ChatModelOption {
 
 const NATIVE_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
   {
-    provider: "anthropic",
-    modelId: "claude-fable-5",
-    routingProvider: "anthropic",
-    nativeProvider: "anthropic",
-    canonicalId: "claude-fable-5",
-  },
-  {
-    provider: "anthropic",
-    modelId: "claude-opus-4-7",
-    routingProvider: "anthropic",
-    nativeProvider: "anthropic",
-    canonicalId: "claude-opus-4-7",
-  },
-  {
     provider: "openai",
     modelId: "gpt-5.5",
     routingProvider: "openai",
@@ -63,23 +49,23 @@ const NATIVE_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
     nativeProvider: "openai",
     canonicalId: "gpt-5.4-mini",
   },
-];
-
-const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
   {
-    provider: "openrouter",
-    modelId: "anthropic/claude-fable-5",
-    routingProvider: "openrouter",
-    nativeProvider: "anthropic",
-    canonicalId: "claude-fable-5",
-  },
-  {
-    provider: "openrouter",
-    modelId: "anthropic/claude-opus-4.7",
-    routingProvider: "openrouter",
+    provider: "anthropic",
+    modelId: "claude-opus-4-7",
+    routingProvider: "anthropic",
     nativeProvider: "anthropic",
     canonicalId: "claude-opus-4-7",
   },
+  {
+    provider: "anthropic",
+    modelId: "claude-fable-5",
+    routingProvider: "anthropic",
+    nativeProvider: "anthropic",
+    canonicalId: "claude-fable-5",
+  },
+];
+
+const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
   {
     provider: "openrouter",
     modelId: "openai/gpt-5.5",
@@ -93,6 +79,20 @@ const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
     routingProvider: "openrouter",
     nativeProvider: "openai",
     canonicalId: "gpt-5.4-mini",
+  },
+  {
+    provider: "openrouter",
+    modelId: "anthropic/claude-opus-4.7",
+    routingProvider: "openrouter",
+    nativeProvider: "anthropic",
+    canonicalId: "claude-opus-4-7",
+  },
+  {
+    provider: "openrouter",
+    modelId: "anthropic/claude-fable-5",
+    routingProvider: "openrouter",
+    nativeProvider: "anthropic",
+    canonicalId: "claude-fable-5",
   },
   {
     provider: "openrouter",

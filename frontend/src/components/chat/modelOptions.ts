@@ -9,17 +9,6 @@ export type ChatModelOption = {
 
 export const ALL_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
   {
-    label: "Fable 5",
-    provider: "anthropic",
-    modelId: "claude-fable-5",
-  },
-  {
-    label: "Fable 5",
-    provider: "openrouter",
-    modelId: "anthropic/claude-fable-5",
-    routingProvider: "openrouter",
-  },
-  {
     label: "GPT 5.5",
     provider: "openai",
     modelId: "gpt-5.5",
@@ -50,6 +39,17 @@ export const ALL_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
     label: "Opus 4.7",
     provider: "openrouter",
     modelId: "anthropic/claude-opus-4.7",
+    routingProvider: "openrouter",
+  },
+  {
+    label: "Fable 5",
+    provider: "anthropic",
+    modelId: "claude-fable-5",
+  },
+  {
+    label: "Fable 5",
+    provider: "openrouter",
+    modelId: "anthropic/claude-fable-5",
     routingProvider: "openrouter",
   },
   {
