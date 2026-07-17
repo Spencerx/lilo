@@ -48,13 +48,28 @@ export type ChatModelProvider =
 export type ChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
+  | "gpt-5.6-sol"
+  | "gpt-5.6-terra"
+  | "gpt-5.6-luna"
   | "claude-fable-5"
   | "claude-opus-4-7"
   | "openai/gpt-5.5"
   | "openai/gpt-5.4-mini"
+  | "openai/gpt-5.6-sol"
+  | "openai/gpt-5.6-terra"
+  | "openai/gpt-5.6-luna"
   | "anthropic/claude-fable-5"
   | "anthropic/claude-opus-4.7"
   | "moonshotai/kimi-k2.6";
+
+export type ChatThinkingLevel =
+  | "off"
+  | "minimal"
+  | "low"
+  | "medium"
+  | "high"
+  | "xhigh"
+  | "max";
 
 export interface ChatMessage {
   id: string;
@@ -87,6 +102,7 @@ export interface ChatSummary {
   activeRunLastSeq: number | null;
   modelProvider: ChatModelProvider;
   modelId: ChatModelId;
+  thinkingLevel: ChatThinkingLevel;
 }
 
 export type ConnectionState = "idle" | "connecting" | "streaming" | "error";
@@ -134,12 +150,16 @@ export interface ChatStoreState {
     select?: boolean;
     modelProvider?: ChatSummary["modelProvider"];
     modelId?: ChatSummary["modelId"];
+    thinkingLevel?: ChatSummary["thinkingLevel"];
   }) => Promise<string>;
   selectChat: (chatId: string) => Promise<void>;
   prefetchChat: (chatId: string) => Promise<void>;
   updateChatModel: (
     chatId: string,
-    modelSelection: Pick<ChatSummary, "modelProvider" | "modelId">,
+    modelSelection: Pick<
+      ChatSummary,
+      "modelProvider" | "modelId" | "thinkingLevel"
+    >,
   ) => Promise<void>;
   setDraft: (chatId: string, draft: string) => void;
   replaceDraftSelectedElements: (

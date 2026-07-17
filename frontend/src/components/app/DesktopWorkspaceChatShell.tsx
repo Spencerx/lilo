@@ -71,7 +71,10 @@ interface DesktopWorkspaceChatShellProps {
   onSendQueuedMessage: (chatId: string, queuedMessageId: string) => Promise<void>;
   onUpdateChatModel: (
     chatId: string,
-    modelSelection: Pick<ChatSessionState, "modelProvider" | "modelId">,
+    modelSelection: Pick<
+      ChatSessionState,
+      "modelProvider" | "modelId" | "thinkingLevel"
+    >,
   ) => Promise<void>;
   onSendMessage: (
     chatId: string,

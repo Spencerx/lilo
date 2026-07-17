@@ -4,7 +4,13 @@ import {
 } from "./chat.service.js";
 import { uploadedChatFileFromFile } from "./chat.request.js";
 import {
+  addModelFavorite,
+  listModelFavorites,
+  removeModelFavorite,
+} from "../../shared/pi/modelFavorites.js";
+import {
   getAllowedChatModelOptions,
+  isChatThinkingLevel,
   isSupportedChatModelSelection,
 } from "../../shared/pi/runtime.js";
 
@@ -39,6 +45,34 @@ export const registerChatRoutes = (
 
   app.get("/chats/models", (c) => {
     return c.json({ models: getAllowedChatModelOptions() });
+  });
+
+  app.get("/chats/model-favorites", async (c) => {
+    return c.json({ favorites: await listModelFavorites() });
+  });
+
+  app.post("/chats/model-favorites", async (c) => {
+    const body = await c.req.json();
+    if (
+      !isSupportedChatModelSelection(body)
+      || !isChatThinkingLevel(body.thinkingLevel)
+    ) {
+      return c.json({ error: "Invalid model favorite" }, 400);
+    }
+
+    const favorite = await addModelFavorite({
+      provider: body.provider,
+      modelId: body.modelId,
+      thinkingLevel: body.thinkingLevel,
+    });
+    return c.json({ favorite }, 201);
+  });
+
+  app.delete("/chats/model-favorites/:favoriteId", async (c) => {
+    if (!(await removeModelFavorite(c.req.param("favoriteId")))) {
+      return c.json({ error: "Favorite not found" }, 404);
+    }
+    return c.json({ ok: true });
   });
 
   app.get("/chats/system-prompt", async (c) => {

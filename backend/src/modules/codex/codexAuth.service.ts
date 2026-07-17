@@ -1,4 +1,4 @@
-import type { OAuthDeviceCodeInfo } from "@earendil-works/pi-ai";
+import type { OAuthDeviceCodeInfo } from "@earendil-works/pi-ai/compat";
 import {
   PI_CODEX_PROVIDER,
   piAuthStorage,

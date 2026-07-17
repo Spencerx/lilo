@@ -11,6 +11,7 @@ import type {
   ChatModelId,
   ChatModelProvider,
   ChatQueuedMessage,
+  ChatThinkingLevel,
 } from "../../../store/chatStore";
 import { FileAttachmentChip } from "./FileAttachmentChip";
 import { ChatModelSelect } from "./ChatModelSelect";
@@ -120,6 +121,7 @@ interface ChatComposerProps {
   isBusy: boolean;
   modelProvider: ChatModelProvider;
   modelId: ChatModelId;
+  thinkingLevel: ChatThinkingLevel;
   activeQueuedEditId: string | null;
   showScrollToBottom: boolean;
   inputRef: RefObject<HTMLTextAreaElement>;
@@ -150,6 +152,7 @@ interface ChatComposerProps {
     modelSelection: {
       modelProvider: ChatModelProvider;
       modelId: ChatModelId;
+      thinkingLevel: ChatThinkingLevel;
     },
   ) => Promise<void>;
   onPreviewSelectedElement?: (src: string) => void;
@@ -173,6 +176,7 @@ export function ChatComposer({
   isBusy,
   modelProvider,
   modelId,
+  thinkingLevel,
   activeQueuedEditId,
   showScrollToBottom,
   inputRef,
@@ -316,6 +320,7 @@ export function ChatComposer({
     modelSelection: {
       provider: ChatModelProvider;
       modelId: ChatModelId;
+      thinkingLevel: ChatThinkingLevel;
     },
   ) => {
     setModelChangeError(null);
@@ -324,6 +329,7 @@ export function ChatComposer({
       await onUpdateModel(chatId, {
         modelProvider: modelSelection.provider,
         modelId: modelSelection.modelId,
+        thinkingLevel: modelSelection.thinkingLevel,
       });
     } catch {
       setModelChangeError(`Couldn't change model. Reverted to ${currentModelLabel}.`);
@@ -740,6 +746,7 @@ export function ChatComposer({
               <ChatModelSelect
                 modelProvider={modelProvider}
                 modelId={modelId}
+                thinkingLevel={thinkingLevel}
                 disabled={isBusy}
                 onChange={(modelSelection) => void handleModelChange(modelSelection)}
               />

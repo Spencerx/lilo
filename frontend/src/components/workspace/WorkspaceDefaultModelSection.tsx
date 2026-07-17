@@ -3,8 +3,10 @@ import { config } from "../../config/config";
 import { onModelAvailabilityChanged } from "../../lib/modelAvailability";
 import { fetchJson } from "../../store/chat/api";
 import type { ChatModelId, ChatModelProvider } from "../../store/chatStore";
+import type { ChatThinkingLevel } from "../../store/chat/types";
 import {
   getChatModelRouteLabel,
+  getThinkingLevelLabel,
   isSameChatModel,
   type ChatModelOption,
   toChatModelOption,
@@ -13,6 +15,7 @@ import {
 type ChatModelSelection = {
   provider: ChatModelProvider;
   modelId: ChatModelId;
+  thinkingLevel?: ChatThinkingLevel;
 };
 
 interface WorkspaceDefaultModelSectionProps {
@@ -48,6 +51,32 @@ export function WorkspaceDefaultModelSection({
   const selectedRoute = selected
     ? options.find((option) => isSameChatModel(option, selected)) ?? selected
     : null;
+  const selectedThinkingLevel = useMemo<ChatThinkingLevel>(() => {
+    if (
+      defaultChatModelSelection?.thinkingLevel
+      && selectedRoute?.thinkingLevels.includes(defaultChatModelSelection.thinkingLevel)
+    ) {
+      return defaultChatModelSelection.thinkingLevel;
+    }
+
+    return selectedRoute?.thinkingLevels.includes("high")
+      ? "high"
+      : selectedRoute?.thinkingLevels[0] ?? "high";
+  }, [defaultChatModelSelection?.thinkingLevel, selectedRoute]);
+
+  const saveSelection = (selection: Required<ChatModelSelection>) => {
+    setIsSaving(true);
+    setError(null);
+    void Promise.resolve(onDefaultChatModelChange(selection))
+      .catch((saveError) => {
+        setError(
+          saveError instanceof Error
+            ? saveError.message
+            : "Failed to save default model",
+        );
+      })
+      .finally(() => setIsSaving(false));
+  };
 
   useEffect(() => {
     return onModelAvailabilityChanged(() => {
@@ -61,7 +90,12 @@ export function WorkspaceDefaultModelSection({
     const loadAllowedModels = async () => {
       try {
         const payload = await fetchJson<{
-          models: Array<Pick<ChatModelOption, "provider" | "modelId" | "routingProvider">>;
+          models: Array<
+            Pick<
+              ChatModelOption,
+              "provider" | "modelId" | "routingProvider" | "thinkingLevels"
+            >
+          >;
         }>(`${config.apiBaseUrl}/chats/models`);
         const nextOptions = payload.models.map(toChatModelOption);
         if (!cancelled) {
@@ -88,51 +122,81 @@ export function WorkspaceDefaultModelSection({
         Default Model
       </p>
       <div className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-3 dark:border-neutral-700 dark:bg-neutral-800">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
+        <div>
+          <div>
             <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-              New channel chats
+              New tasks
             </p>
             <p className="mt-0.5 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
-              Used when Email, Telegram, WhatsApp, or new chats create a fresh
-              session. Existing chats can still switch models in the composer.
+              Used whenever a new task is started, including Email, Telegram,
+              and WhatsApp. Existing tasks can still switch models in the composer.
             </p>
           </div>
-          <select
-            value={selectedRoute ? modelValue(selectedRoute) : ""}
-            disabled={isSaving || options.length === 0}
-            className="shrink-0 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 outline-none transition hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-neutral-500"
-            onChange={(event) => {
-              const next = options.find((option) => modelValue(option) === event.target.value);
-              if (!next) {
-                return;
-              }
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <label className="min-w-0">
+              <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                Model
+              </span>
+              <select
+                aria-label="Default model for new tasks"
+                value={selectedRoute ? modelValue(selectedRoute) : ""}
+                disabled={isSaving || options.length === 0}
+                className="w-full rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs font-medium text-neutral-800 outline-none transition hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-neutral-500"
+                onChange={(event) => {
+                  const next = options.find((option) => modelValue(option) === event.target.value);
+                  if (!next) {
+                    return;
+                  }
 
-              setIsSaving(true);
-              setError(null);
-              void Promise.resolve(
-                onDefaultChatModelChange({
-                  provider: next.provider,
-                  modelId: next.modelId,
-                }),
-              )
-                .catch((saveError) => {
-                  setError(
-                    saveError instanceof Error
-                      ? saveError.message
-                      : "Failed to save default model",
-                  );
-                })
-                .finally(() => setIsSaving(false));
-            }}
-          >
-            {selectedRoute ? null : <option value="">Loading...</option>}
-            {options.map((option) => (
-              <option key={modelValue(option)} value={modelValue(option)}>
-                {option.label} · {getChatModelRouteLabel(option)}
-              </option>
-            ))}
-          </select>
+                  const nextThinkingLevel = next.thinkingLevels.includes(selectedThinkingLevel)
+                    ? selectedThinkingLevel
+                    : next.thinkingLevels.includes("high")
+                      ? "high"
+                      : next.thinkingLevels[0];
+                  saveSelection({
+                    provider: next.provider,
+                    modelId: next.modelId,
+                    thinkingLevel: nextThinkingLevel,
+                  });
+                }}
+              >
+                {selectedRoute ? null : <option value="">Loading...</option>}
+                {options.map((option) => (
+                  <option key={modelValue(option)} value={modelValue(option)}>
+                    {option.label} · {getChatModelRouteLabel(option)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="min-w-0">
+              <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                Thinking
+              </span>
+              <select
+                aria-label="Default thinking level for new tasks"
+                value={selectedThinkingLevel}
+                disabled={isSaving || !selectedRoute}
+                className="w-full rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs font-medium text-neutral-800 outline-none transition hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-neutral-500"
+                onChange={(event) => {
+                  if (!selectedRoute) {
+                    return;
+                  }
+                  saveSelection({
+                    provider: selectedRoute.provider,
+                    modelId: selectedRoute.modelId,
+                    thinkingLevel: event.target.value as ChatThinkingLevel,
+                  });
+                }}
+              >
+                {(selectedRoute?.thinkingLevels ?? []).map((level) => (
+                  <option key={level} value={level}>
+                    {getThinkingLevelLabel(level)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
         {error ? (
           <p className="mt-2 text-xs text-red-600 dark:text-red-300">{error}</p>

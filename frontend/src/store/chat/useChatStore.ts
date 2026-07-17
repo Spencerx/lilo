@@ -593,6 +593,9 @@ export const useChatStore = create<ChatStoreState>((set, get) => {
         ? JSON.stringify({
             provider: options.modelProvider,
             modelId: options.modelId,
+            ...(options.thinkingLevel
+              ? { thinkingLevel: options.thinkingLevel }
+              : {}),
           })
         : undefined;
     const payload = await fetchJson<ChatDetailResponse>(`${config.apiBaseUrl}/chats`, {
@@ -630,6 +633,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => {
         ...chat,
         modelProvider: modelSelection.modelProvider,
         modelId: modelSelection.modelId,
+        thinkingLevel: modelSelection.thinkingLevel,
       })),
     }));
 
@@ -642,6 +646,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => {
         body: JSON.stringify({
           provider: modelSelection.modelProvider,
           modelId: modelSelection.modelId,
+          thinkingLevel: modelSelection.thinkingLevel,
         }),
       });
 
@@ -662,6 +667,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => {
           ...chat,
           modelProvider: previous.modelProvider,
           modelId: previous.modelId,
+          thinkingLevel: previous.thinkingLevel,
         })),
       }));
       captureFrontendException(error, {

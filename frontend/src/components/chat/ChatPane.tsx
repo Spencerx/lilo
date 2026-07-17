@@ -84,6 +84,7 @@ interface ChatPaneProps {
     modelSelection: {
       modelProvider: ChatSessionState["modelProvider"];
       modelId: ChatSessionState["modelId"];
+      thinkingLevel: ChatSessionState["thinkingLevel"];
     },
   ) => Promise<void>;
   onSendMessage: (
@@ -533,6 +534,7 @@ export function ChatPane({
         isBusy={isBusy}
         modelProvider={chat.modelProvider}
         modelId={chat.modelId}
+        thinkingLevel={chat.thinkingLevel}
         activeQueuedEditId={activeQueuedEditId}
         showScrollToBottom={showScrollToBottom}
         inputRef={inputRef}

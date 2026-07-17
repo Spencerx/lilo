@@ -7,12 +7,11 @@ import {
   createAgentSession,
 } from "@earendil-works/pi-coding-agent";
 import {
-  type ImageContent,
   complete,
   getEnvApiKey,
   getModel,
-  type TextContent,
-} from "@earendil-works/pi-ai";
+} from "@earendil-works/pi-ai/compat";
+import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 import type { UploadedChatFile } from "./chat.request.js";
 import {
   OPEN_APP_TOOL_NAME,
@@ -24,6 +23,8 @@ import { WORKSPACE_ROOT } from "../../shared/config/paths.js";
 import { resolveSessionSubdir } from "../../shared/config/sessions.js";
 import {
   type ChatModelSelection,
+  type ChatThinkingLevel,
+  DEFAULT_CHAT_THINKING_LEVEL,
   getDefaultChatModelSelection,
   getPromptFirstEventTimeoutMs,
   getPromptTimeoutMs,
@@ -86,6 +87,7 @@ export interface ChatSummary {
   activeRunLastSeq: number | null;
   modelProvider: ChatModelSelection["provider"];
   modelId: ChatModelSelection["modelId"];
+  thinkingLevel: ChatThinkingLevel;
 }
 
 export interface ChatDetail extends ChatSummary {
@@ -864,6 +866,7 @@ export class PiSdkChatService {
       activeRunLastSeq: null,
       modelProvider: resolvedModelSelection.provider,
       modelId: resolvedModelSelection.modelId,
+      thinkingLevel: resolvedModelSelection.thinkingLevel ?? DEFAULT_CHAT_THINKING_LEVEL,
       messages: [],
     };
   }
@@ -1843,7 +1846,7 @@ export class PiSdkChatService {
     const { session } = await createAgentSession({
       cwd: this.workspaceDir,
       model: resolvePiModel(modelSelection),
-      thinkingLevel: "high",
+      thinkingLevel: modelSelection.thinkingLevel ?? DEFAULT_CHAT_THINKING_LEVEL,
       sessionManager,
       authStorage: piAuthStorage,
       modelRegistry: piModelRegistry,
@@ -1920,6 +1923,7 @@ export class PiSdkChatService {
       activeRunLastSeq: activeRun?.lastSeq ?? null,
       modelProvider: modelSelection.provider,
       modelId: modelSelection.modelId,
+      thinkingLevel: modelSelection.thinkingLevel ?? DEFAULT_CHAT_THINKING_LEVEL,
     };
   }
 

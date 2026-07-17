@@ -27,7 +27,7 @@ the OAuth tokens automatically; they are never returned by Lilo's APIs.
 | -------------------- | --------------------------------------------------------------------------- |
 | `OPENAI_API_KEY`     | OpenAI API routing for GPT models, plus OpenAI speech and transcription     |
 | `ANTHROPIC_API_KEY`  | Claude Fable 5, Claude Opus 4.7                                             |
-| `OPENROUTER_API_KEY` | OpenRouter routing for GPT 5.5, GPT 5.4 Mini, Claude Fable 5, Claude Opus 4.7, and Kimi K2.6 |
+| `OPENROUTER_API_KEY` | OpenRouter routing for GPT 5.5, GPT 5.6, GPT 5.4 Mini, Claude Fable 5, Claude Opus 4.7, and Kimi K2.6 |
 
 Codex is preferred for supported GPT models when connected. Otherwise, native
 provider keys take priority, with OpenRouter used as the fallback route.
@@ -41,7 +41,15 @@ LILO_CHAT_MODEL_ALLOWLIST=gpt-5.5,gpt-5.4-mini
 ```
 
 Supported allowlist IDs: `claude-fable-5`, `claude-opus-4-7`, `gpt-5.5`,
-`gpt-5.4-mini`, and `moonshotai/kimi-k2.6`.
+`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.4-mini`, and
+`moonshotai/kimi-k2.6`.
+
+Each task stores its own thinking level. GPT 5.6 supports Off, Low, Medium,
+High, X-High, and Max; other models support Off through X-High, including
+Minimal. The workspace default controls new tasks, while the composer can
+change the model and thinking level for an existing task. Favorite
+model/provider/thinking combinations are stored server-side at
+`<LILO_SESSIONS_DIR>/model-favorites.json`.
 
 ## Agent tools
 

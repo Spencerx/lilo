@@ -1,4 +1,8 @@
-import type { ChatModelId, ChatModelProvider } from "../../store/chatStore";
+import type {
+  ChatModelId,
+  ChatModelProvider,
+  ChatThinkingLevel,
+} from "../../store/chatStore";
 
 export type WorkspaceAppLink = {
   name: string;
@@ -41,6 +45,7 @@ export type WorkspacePreferences = {
   defaultChatModelSelection?: {
     provider: ChatModelProvider;
     modelId: ChatModelId;
+    thinkingLevel?: ChatThinkingLevel;
   };
   automationOutputChannel?: AutomationOutputChannel;
   gitRemoteUrl?: string;

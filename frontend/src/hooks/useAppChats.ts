@@ -28,6 +28,7 @@ const toReadonlyChatState = (detail: AppChatDetail): ChatSessionState => ({
   activeRunLastSeq: null,
   modelProvider: "anthropic",
   modelId: "claude-opus-4-7",
+  thinkingLevel: "high",
   messages: detail.messages,
   isLoaded: true,
   connectionState: "idle",

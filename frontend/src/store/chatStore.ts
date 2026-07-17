@@ -7,6 +7,7 @@ export type {
   ChatMessage,
   ChatModelId,
   ChatModelProvider,
+  ChatThinkingLevel,
   ChatMessageRole,
   ChatSessionState,
   ChatStoreState,
