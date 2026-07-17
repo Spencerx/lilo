@@ -12,6 +12,7 @@ import { registerChannelStatusRoutes } from "../modules/channels/channelStatus.r
 import { registerOutboundMediaRoutes } from "../modules/channels/outboundMedia.routes.js";
 import { registerChatRoutes } from "../modules/chat/chat.routes.js";
 import { PiSdkChatService } from "../modules/chat/chat.service.js";
+import { registerCodexAuthRoutes } from "../modules/codex/codexAuth.routes.js";
 import { registerEmailRoutes } from "../modules/email/email.routes.js";
 import { registerTelegramRoutes } from "../modules/telegram/telegram.routes.js";
 import { registerWhatsAppRoutes } from "../modules/whatsapp/whatsapp.routes.js";
@@ -182,6 +183,7 @@ export const createApp = ({
   }
 
   registerChannelStatusRoutes(app);
+  registerCodexAuthRoutes(app);
   registerAutomationRoutes(app, automationService);
   registerWorkspaceRoutes(app);
   registerAppAgentRoutes(app, appAgentService);

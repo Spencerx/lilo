@@ -7,7 +7,7 @@ export type ChatModelOption = {
   routingProvider?: ChatModelProvider;
 };
 
-export const ALL_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
+const BASE_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
   {
     label: "GPT 5.5",
     provider: "openai",
@@ -60,6 +60,17 @@ export const ALL_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
   },
 ];
 
+export const ALL_CHAT_MODEL_OPTIONS: ChatModelOption[] = [
+  ...BASE_CHAT_MODEL_OPTIONS,
+  ...BASE_CHAT_MODEL_OPTIONS
+    .filter((option) => option.provider === "openai")
+    .map((option): ChatModelOption => ({
+      ...option,
+      provider: "openai-codex",
+      routingProvider: "openai-codex",
+    })),
+];
+
 export const toChatModelOption = (
   model: Pick<ChatModelOption, "provider" | "modelId"> & {
     routingProvider?: ChatModelProvider;
@@ -83,6 +94,10 @@ export const toChatModelOption = (
 };
 
 export const getChatModelProviderLabel = (provider: ChatModelProvider): string => {
+  if (provider === "openai-codex") {
+    return "Codex subscription";
+  }
+
   if (provider === "openai") {
     return "OpenAI";
   }
@@ -96,3 +111,18 @@ export const getChatModelProviderLabel = (provider: ChatModelProvider): string =
 
 export const getChatModelRouteLabel = (option: ChatModelOption): string =>
   getChatModelProviderLabel(option.routingProvider ?? option.provider);
+
+export const getChatModelIdentity = (
+  model: Pick<ChatModelOption, "provider" | "modelId">,
+): string => {
+  const knownOption = ALL_CHAT_MODEL_OPTIONS.find(
+    (option) => option.provider === model.provider && option.modelId === model.modelId,
+  );
+
+  return knownOption?.label ?? `${model.provider}:${model.modelId}`;
+};
+
+export const isSameChatModel = (
+  left: Pick<ChatModelOption, "provider" | "modelId">,
+  right: Pick<ChatModelOption, "provider" | "modelId">,
+): boolean => getChatModelIdentity(left) === getChatModelIdentity(right);

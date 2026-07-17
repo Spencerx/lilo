@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { config } from "../../../config/config";
+import { onModelAvailabilityChanged } from "../../../lib/modelAvailability";
 import { fetchJson } from "../../../store/chat/api";
 import {
+  getChatModelRouteLabel,
+  isSameChatModel,
   type ChatModelOption,
   toChatModelOption,
 } from "../modelOptions";
@@ -22,20 +25,24 @@ export function ChatModelSelect({
   onChange,
 }: ChatModelSelectProps) {
   const [allowedOptions, setAllowedOptions] = useState<ChatModelOption[] | null>(null);
-  const selectedValue = `${modelProvider}:${modelId}`;
+  const [modelRefreshVersion, setModelRefreshVersion] = useState(0);
   const selected = toChatModelOption({ provider: modelProvider, modelId });
   const options = useMemo(() => {
     const loaded = allowedOptions ?? [selected];
-    if (
-      loaded.some(
-        (option) => option.provider === selected.provider && option.modelId === selected.modelId,
-      )
-    ) {
+    if (loaded.some((option) => isSameChatModel(option, selected))) {
       return loaded;
     }
 
     return [selected, ...loaded];
   }, [allowedOptions, selected]);
+  const selectedRoute = options.find((option) => isSameChatModel(option, selected)) ?? selected;
+  const selectedValue = `${selectedRoute.provider}:${selectedRoute.modelId}`;
+
+  useEffect(() => {
+    return onModelAvailabilityChanged(() => {
+      setModelRefreshVersion((version) => version + 1);
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,7 +66,7 @@ export function ChatModelSelect({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [modelRefreshVersion]);
 
   return (
     <label
@@ -70,7 +77,7 @@ export function ChatModelSelect({
       }`}
       title="Select model"
     >
-      <span className="whitespace-nowrap">{selected?.label ?? "Model"}</span>
+      <span className="whitespace-nowrap">{selected.label}</span>
       <svg
         className="h-3 w-3 shrink-0 opacity-60"
         viewBox="0 0 24 24"
@@ -106,7 +113,7 @@ export function ChatModelSelect({
             key={`${option.provider}:${option.modelId}`}
             value={`${option.provider}:${option.modelId}`}
           >
-            {option.label}
+            {option.label} · {getChatModelRouteLabel(option)}
           </option>
         ))}
       </select>

@@ -31,6 +31,7 @@ import {
   resolvePiModel,
 } from "../../shared/pi/runtime.js";
 import { createSystemPromptResourceLoader } from "../../shared/pi/resourceLoader.js";
+import { piAuthStorage, piModelRegistry } from "../../shared/pi/auth.js";
 import { ensureDir, persistSessionManager } from "../../shared/session/sessionStore.js";
 import { createStreamingTimeouts } from "../../shared/session/timeouts.js";
 import {
@@ -1844,6 +1845,8 @@ export class PiSdkChatService {
       model: resolvePiModel(modelSelection),
       thinkingLevel: "high",
       sessionManager,
+      authStorage: piAuthStorage,
+      modelRegistry: piModelRegistry,
       customTools: CUSTOM_TOOLS,
       resourceLoader,
     });

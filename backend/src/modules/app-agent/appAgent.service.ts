@@ -17,6 +17,7 @@ import {
   resolvePiModel,
 } from "../../shared/pi/runtime.js";
 import { createSystemPromptResourceLoader } from "../../shared/pi/resourceLoader.js";
+import { piAuthStorage, piModelRegistry } from "../../shared/pi/auth.js";
 import {
   getLatestAssistantMessage,
   reportPiUpstreamError,
@@ -307,8 +308,6 @@ export class PiAppAgentService {
   private readonly sessionRootDir = ensureDir(resolveSessionSubdir("apps"));
 
   private readonly liveSessions = new Map<string, LiveAppSessionHandle>();
-
-  private readonly model = resolvePiModel();
 
   async createSession(
     appName: string,
@@ -628,9 +627,11 @@ export class PiAppAgentService {
     );
     const { session } = await createAgentSession({
       cwd: this.workspaceDir,
-      model: this.model,
+      model: resolvePiModel(),
       thinkingLevel: "high",
       sessionManager,
+      authStorage: piAuthStorage,
+      modelRegistry: piModelRegistry,
       customTools: CUSTOM_TOOLS,
       resourceLoader,
     });

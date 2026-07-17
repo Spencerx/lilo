@@ -54,7 +54,7 @@ Telegram is the easiest way to use Lilo, but it also works wherever you do: What
 
 - Node.js 20+
 - [pnpm](https://pnpm.io) 10+
-- An API key for at least one of: OpenAI, Anthropic, OpenRouter
+- A ChatGPT account with Codex access, or an OpenAI, Anthropic, or OpenRouter API key
 
 ### 1. Install
 
@@ -73,8 +73,8 @@ Create a `.env.local` at the repo root:
 LILO_WORKSPACE_DIR=./workspace          # where the agent's files live
 LILO_SESSIONS_DIR=./.lilo-sessions      # persistent chat session storage
 
-# At least one chat model
-OPENAI_API_KEY=sk-...                   # enables GPT 5.5
+# Optional API-backed chat routes and OpenAI audio
+OPENAI_API_KEY=sk-...                   # OpenAI API models, speech, and transcription
 ANTHROPIC_API_KEY=sk-ant-...            # enables Claude Fable 5 and Claude Opus 4.7
 OPENROUTER_API_KEY=sk-or-...            # enables OpenRouter-routed models
 
@@ -83,6 +83,10 @@ LILO_AUTH_PASSWORD=choose-a-strong-password   # locks down the whole app
 ```
 
 See [Configuration](./docs/configuration.md) for the full list.
+
+Alternatively, start Lilo and choose **Connect Codex** in Workspace Settings to
+use models from your ChatGPT Codex subscription without an OpenAI API key for
+Pi-powered chat.
 
 ### 3. Run
 

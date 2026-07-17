@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { logout, notifyAuthRequired } from "../../lib/auth";
 import { ChannelStatusPanel } from "../chat/components/ChannelStatusPanel";
 import { WorkspaceAppUpdatesSection } from "./WorkspaceAppUpdatesSection";
+import { CodexConnectionSection } from "./CodexConnectionSection";
 import { WorkspaceDefaultModelSection } from "./WorkspaceDefaultModelSection";
 import { TIMEZONE_META } from "./timezoneMeta";
 import type { WorkspacePreferences, WorkspaceTemplateUpdate } from "./types";
@@ -337,6 +338,8 @@ export function WorkspaceSettingsButton({
                       })}
                     </div>
                   </section>
+
+                  <CodexConnectionSection />
 
                   <WorkspaceDefaultModelSection
                     defaultChatModelSelection={defaultChatModelSelection}

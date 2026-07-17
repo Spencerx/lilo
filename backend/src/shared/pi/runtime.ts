@@ -1,7 +1,11 @@
-import { getModel } from "@earendil-works/pi-ai";
 import { backendConfig } from "../config/config.js";
+import { piModelRegistry } from "./auth.js";
 
-export type ChatModelProvider = "openai" | "anthropic" | "openrouter";
+export type ChatModelProvider =
+  | "openai-codex"
+  | "openai"
+  | "anthropic"
+  | "openrouter";
 export type CanonicalChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
@@ -30,7 +34,6 @@ export interface ChatModelOption extends ChatModelSelection {
 }
 
 interface ChatModelRouteOption extends ChatModelOption {
-  nativeProvider?: Exclude<ChatModelProvider, "openrouter">;
   canonicalId: CanonicalChatModelId;
 }
 
@@ -39,59 +42,60 @@ const NATIVE_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
     provider: "openai",
     modelId: "gpt-5.5",
     routingProvider: "openai",
-    nativeProvider: "openai",
     canonicalId: "gpt-5.5",
   },
   {
     provider: "openai",
     modelId: "gpt-5.4-mini",
     routingProvider: "openai",
-    nativeProvider: "openai",
     canonicalId: "gpt-5.4-mini",
   },
   {
     provider: "anthropic",
     modelId: "claude-opus-4-7",
     routingProvider: "anthropic",
-    nativeProvider: "anthropic",
     canonicalId: "claude-opus-4-7",
   },
   {
     provider: "anthropic",
     modelId: "claude-fable-5",
     routingProvider: "anthropic",
-    nativeProvider: "anthropic",
     canonicalId: "claude-fable-5",
   },
 ];
+
+const CODEX_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] =
+  NATIVE_CHAT_MODEL_OPTIONS
+    .filter((option) => option.provider === "openai")
+    .map((option) => ({
+      ...option,
+      provider: "openai-codex",
+      routingProvider: "openai-codex",
+    }));
 
 const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
   {
     provider: "openrouter",
     modelId: "openai/gpt-5.5",
     routingProvider: "openrouter",
-    nativeProvider: "openai",
     canonicalId: "gpt-5.5",
   },
   {
     provider: "openrouter",
     modelId: "openai/gpt-5.4-mini",
     routingProvider: "openrouter",
-    nativeProvider: "openai",
     canonicalId: "gpt-5.4-mini",
   },
   {
     provider: "openrouter",
     modelId: "anthropic/claude-opus-4.7",
     routingProvider: "openrouter",
-    nativeProvider: "anthropic",
     canonicalId: "claude-opus-4-7",
   },
   {
     provider: "openrouter",
     modelId: "anthropic/claude-fable-5",
     routingProvider: "openrouter",
-    nativeProvider: "anthropic",
     canonicalId: "claude-fable-5",
   },
   {
@@ -103,6 +107,7 @@ const OPENROUTER_CHAT_MODEL_OPTIONS: ChatModelRouteOption[] = [
 ];
 
 export const CHAT_MODEL_OPTIONS: ChatModelOption[] = [
+  ...CODEX_CHAT_MODEL_OPTIONS,
   ...NATIVE_CHAT_MODEL_OPTIONS,
   ...OPENROUTER_CHAT_MODEL_OPTIONS,
 ];
@@ -128,49 +133,33 @@ const getChatModelAllowlist = (): Set<string> | null => {
   return values.length > 0 ? new Set(values) : null;
 };
 
-const hasNativeProviderKey = (
-  provider: Exclude<ChatModelProvider, "openrouter">,
-): boolean => {
-  if (provider === "openai") {
-    return Boolean(backendConfig.chat.openaiApiKey);
-  }
+const getAvailableChatModelRoutes = (): ChatModelRouteOption[] => {
+  const availableModels = new Set(
+    piModelRegistry
+      .getAvailable()
+      .map((model) => `${model.provider}:${model.id}`),
+  );
 
-  return Boolean(backendConfig.chat.anthropicApiKey);
+  return [
+    ...CODEX_CHAT_MODEL_OPTIONS,
+    ...NATIVE_CHAT_MODEL_OPTIONS,
+    ...OPENROUTER_CHAT_MODEL_OPTIONS,
+  ].filter((option) => {
+    return availableModels.has(`${option.provider}:${option.modelId}`);
+  });
 };
 
 const getRoutableChatModelOptions = (): ChatModelRouteOption[] => {
-  const hasOpenRouterKey = Boolean(backendConfig.chat.openrouterApiKey);
+  const seenModels = new Set<CanonicalChatModelId>();
 
-  if (!hasOpenRouterKey) {
-    return NATIVE_CHAT_MODEL_OPTIONS;
-  }
-
-  const options: ChatModelRouteOption[] = [];
-
-  for (const nativeOption of NATIVE_CHAT_MODEL_OPTIONS) {
-    if (
-      !nativeOption.nativeProvider
-      || hasNativeProviderKey(nativeOption.nativeProvider)
-    ) {
-      options.push(nativeOption);
-      continue;
+  return getAvailableChatModelRoutes().filter((option) => {
+    if (seenModels.has(option.canonicalId)) {
+      return false;
     }
 
-    const openrouterOption = OPENROUTER_CHAT_MODEL_OPTIONS.find(
-      (option) =>
-        option.nativeProvider === nativeOption.nativeProvider
-        && option.canonicalId === nativeOption.canonicalId,
-    );
-    if (openrouterOption) {
-      options.push(openrouterOption);
-    }
-  }
-
-  options.push(
-    ...OPENROUTER_CHAT_MODEL_OPTIONS.filter((option) => !option.nativeProvider),
-  );
-
-  return options;
+    seenModels.add(option.canonicalId);
+    return true;
+  });
 };
 
 const toPublicChatModelOption = (option: ChatModelRouteOption): ChatModelOption => ({
@@ -192,12 +181,8 @@ export const getAllowedChatModelOptions = (): ChatModelOption[] => {
   });
 
   if (allowedOptions.length === 0) {
-    const openrouterHint = backendConfig.chat.openrouterApiKey
-      ? ""
-      : " OpenRouter models require OPENROUTER_API_KEY.";
-
     throw new Error(
-      `LILO_CHAT_MODEL_ALLOWLIST does not include any configured supported models. Configured supported models: ${Array.from(new Set(configuredOptions.map((option) => option.canonicalId))).join(", ")}.${openrouterHint}`,
+      `LILO_CHAT_MODEL_ALLOWLIST does not include any available supported models. Available supported models: ${Array.from(new Set(configuredOptions.map((option) => option.canonicalId))).join(", ")}.`,
     );
   }
 
@@ -214,22 +199,36 @@ export const isSupportedChatModelSelection = (
   const provider = "provider" in value ? value.provider : undefined;
   const modelId = "modelId" in value ? value.modelId : undefined;
 
-  return getAllowedChatModelOptions().some(
-    (option) => option.provider === provider && option.modelId === modelId,
+  const allowlist = getChatModelAllowlist();
+  return getAvailableChatModelRoutes().some(
+    (option) => option.provider === provider
+      && option.modelId === modelId
+      && (!allowlist || allowlist.has(option.canonicalId)),
   );
 };
 
 export const getDefaultChatModelSelection = (): ChatModelSelection => {
-  return getAllowedChatModelOptions()[0];
+  const option = getAllowedChatModelOptions()[0];
+  if (!option) {
+    throw new Error(
+      "No Pi chat models are available. Connect Codex or configure an OpenAI, Anthropic, or OpenRouter API key.",
+    );
+  }
+  return option;
 };
 
 export const resolvePiModel = (
   selection: Partial<ChatModelSelection> = {},
 ) => {
-  const fallback = getDefaultChatModelSelection();
-  const provider = selection.provider ?? fallback.provider;
-  const modelId = selection.modelId ?? fallback.modelId;
-  const model = getModel(provider, modelId as never);
+  const fallback = selection.provider && selection.modelId
+    ? null
+    : getDefaultChatModelSelection();
+  const provider = selection.provider ?? fallback?.provider;
+  const modelId = selection.modelId ?? fallback?.modelId;
+  if (!provider || !modelId) {
+    throw new Error("A Pi chat model provider and model ID are required.");
+  }
+  const model = piModelRegistry.find(provider, modelId);
 
   if (!model) {
     throw new Error(`Unable to resolve model "${provider}/${modelId}" from the Pi SDK`);

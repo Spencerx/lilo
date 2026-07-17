@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { config } from "../../config/config";
+import { onModelAvailabilityChanged } from "../../lib/modelAvailability";
 import { fetchJson } from "../../store/chat/api";
 import type { ChatModelId, ChatModelProvider } from "../../store/chatStore";
 import {
   getChatModelRouteLabel,
+  isSameChatModel,
   type ChatModelOption,
   toChatModelOption,
 } from "../chat/modelOptions";
@@ -28,6 +30,7 @@ export function WorkspaceDefaultModelSection({
   const [allowedOptions, setAllowedOptions] = useState<ChatModelOption[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [modelRefreshVersion, setModelRefreshVersion] = useState(0);
   const selected = defaultChatModelSelection
     ? toChatModelOption(defaultChatModelSelection)
     : allowedOptions[0] ?? null;
@@ -36,16 +39,21 @@ export function WorkspaceDefaultModelSection({
       return allowedOptions;
     }
 
-    if (
-      allowedOptions.some(
-        (option) => option.provider === selected.provider && option.modelId === selected.modelId,
-      )
-    ) {
+    if (allowedOptions.some((option) => isSameChatModel(option, selected))) {
       return allowedOptions;
     }
 
     return [selected, ...allowedOptions];
   }, [allowedOptions, selected]);
+  const selectedRoute = selected
+    ? options.find((option) => isSameChatModel(option, selected)) ?? selected
+    : null;
+
+  useEffect(() => {
+    return onModelAvailabilityChanged(() => {
+      setModelRefreshVersion((version) => version + 1);
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,7 +80,7 @@ export function WorkspaceDefaultModelSection({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [modelRefreshVersion]);
 
   return (
     <section className="border-b border-neutral-200 px-4 py-4 dark:border-neutral-700">
@@ -91,7 +99,7 @@ export function WorkspaceDefaultModelSection({
             </p>
           </div>
           <select
-            value={selected ? modelValue(selected) : ""}
+            value={selectedRoute ? modelValue(selectedRoute) : ""}
             disabled={isSaving || options.length === 0}
             className="shrink-0 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-800 outline-none transition hover:border-neutral-300 disabled:cursor-not-allowed disabled:opacity-60 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-neutral-500"
             onChange={(event) => {
@@ -118,10 +126,10 @@ export function WorkspaceDefaultModelSection({
                 .finally(() => setIsSaving(false));
             }}
           >
-            {selected ? null : <option value="">Loading...</option>}
+            {selectedRoute ? null : <option value="">Loading...</option>}
             {options.map((option) => (
               <option key={modelValue(option)} value={modelValue(option)}>
-                {option.label}
+                {option.label} · {getChatModelRouteLabel(option)}
               </option>
             ))}
           </select>

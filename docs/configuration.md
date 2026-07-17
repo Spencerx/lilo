@@ -11,25 +11,28 @@ All env vars are read from (in order of precedence):
 | Variable                   | Required | Default              | Description                                                                                                 |
 | -------------------------- | -------- | -------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `LILO_WORKSPACE_DIR`       | Yes      | -                    | Directory the agent works in. Auto-bootstrapped from `workspace-template/` if empty.                        |
-| `LILO_SESSIONS_DIR`        | Yes      | -                    | Where persistent Pi chat sessions (`chats/`) and app sessions (`apps/`) are stored.                         |
+| `LILO_SESSIONS_DIR`        | Yes      | -                    | Where persistent Pi sessions and server-only Pi OAuth credentials (`auth.json`) are stored.                 |
 | `LILO_AUTH_PASSWORD`       | -        | unset (open)         | Single-password login for the web app + all APIs + WebSockets. Leave unset for a fully open local instance. |
 | `LILO_AUTH_SESSION_SECRET` | -        | `LILO_AUTH_PASSWORD` | HMAC secret for the session cookie. Rotate to invalidate all existing sessions.                             |
 | `PORT`                     | -        | `8787`               | Backend HTTP port.                                                                                         |
 
 ## Chat models
 
-At least one is required to actually use Lilo.
+Connect a ChatGPT Codex subscription from Workspace Settings, or configure at
+least one API key. Codex credentials are stored server-side at
+`<LILO_SESSIONS_DIR>/auth.json` with restricted file permissions. Pi refreshes
+the OAuth tokens automatically; they are never returned by Lilo's APIs.
 
 | Variable             | Enables                                                                     |
 | -------------------- | --------------------------------------------------------------------------- |
-| `OPENAI_API_KEY`     | GPT 5.5, GPT 5.4 Mini                                                       |
+| `OPENAI_API_KEY`     | OpenAI API routing for GPT models, plus OpenAI speech and transcription     |
 | `ANTHROPIC_API_KEY`  | Claude Fable 5, Claude Opus 4.7                                             |
 | `OPENROUTER_API_KEY` | OpenRouter routing for GPT 5.5, GPT 5.4 Mini, Claude Fable 5, Claude Opus 4.7, and Kimi K2.6 |
 
-If `OPENROUTER_API_KEY` is set, Lilo can route supported models through
-OpenRouter. Native provider keys take priority: for example, if
-`OPENAI_API_KEY` is set, GPT models use OpenAI directly; if it is missing but
-`OPENROUTER_API_KEY` is set, GPT models route through OpenRouter instead.
+Codex is preferred for supported GPT models when connected. Otherwise, native
+provider keys take priority, with OpenRouter used as the fallback route.
+Disconnecting Codex does not affect OpenAI speech or transcription, which still
+require `OPENAI_API_KEY`.
 
 Limit the chat dropdown/API to specific models with a comma-separated allowlist.
 

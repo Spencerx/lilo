@@ -40,7 +40,11 @@ export interface ChatContextInput {
   selectedElements?: ChatElementSelection[];
 }
 
-export type ChatModelProvider = "openai" | "anthropic" | "openrouter";
+export type ChatModelProvider =
+  | "openai-codex"
+  | "openai"
+  | "anthropic"
+  | "openrouter";
 export type ChatModelId =
   | "gpt-5.5"
   | "gpt-5.4-mini"
